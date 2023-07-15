@@ -5,25 +5,19 @@ import plotly.graph_objects as go
 import calplot
 from cv2 import COLOR_BGR2RGB, cvtColor, imread
 import calendar
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode
+from st_aggrid import GridOptionsBuilder, AgGrid
 import streamlit as st
 from os import listdir
 from os.path import isfile, join
 import random
 
-#%%
-# @st.cache_resource
 def load_data():
-
-    # df = pd.read_csv(r"C:\Users\AntonioTannoury\Projects\WhatsAppChatAnalysis\data.csv")
     df = pd.read_csv("data.csv")
-
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df.set_index("timestamp", inplace=True)
     df.insert(0, "timestamp", df.index)
     df["count"] = 1
-
-    df_weekdays = df.groupby(["author", "weekday"]).sum().reset_index()
+    df_weekdays = df.groupby(["author", "weekday"]).sum(numeric_only=True).reset_index()
     cats = [
         "Sunday",
         "Monday",
@@ -187,7 +181,7 @@ love_mean_words_per_day = data_params["love_mean_words_per_day"]
 at_mean_words_per_day = data_params["at_mean_words_per_day"]
 ph_mean_words_per_day = data_params["ph_mean_words_per_day"]
 metrics_dict = data_params["metrics_dict"]
-# %%
+
 def text_format(color, name, header):
     title = f"<{header} style='text-align: center; color: {color};'>{name}</{header}>"
     return title
@@ -203,26 +197,24 @@ def filter_df(
     ].sort_index()
 
     df_filtered.columns = [i.title() for i in df_filtered.columns]
-
+    df_filtered = df_filtered.drop(columns=['Unnamed: 0','Count',"Hour"])
     return df_filtered
 
 
 def ad_grid(data):
     gb = GridOptionsBuilder.from_dataframe(data)
-    gb.configure_pagination(paginationAutoPageSize=True)  # Add pagination
+    gb.configure_pagination(paginationAutoPageSize=True, enabled=True)  # Add pagination
     gb.configure_side_bar()  # Add a sidebar
-    # gb.configure_selection('multiple', use_checkbox=True, groupSelectsChildren="Group checkbox select children") #Enable multi-row selection
     gridOptions = gb.build()
-
     grid_response = AgGrid(
         data,
         gridOptions=gridOptions,
         data_return_mode="AS_INPUT",
         update_mode="MODEL_CHANGED",
-        fit_columns_on_grid_load=False,
-        theme="streamlit",  # Add theme color to the table
+        fit_columns_on_grid_load=True,
+        theme="streamlit", # Add theme color to the table
         enable_enterprise_modules=True,
-        height=600,
+        height=400,
         width="100%",
         reload_data=True,
     )
@@ -397,7 +389,7 @@ def daily_calender(name):
     return cal[0]
 
 
-def image_show(height=600):
+def image_show(height=500):
     mypath = "pics"
     onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
     random_path = random.choice(onlyfiles)
@@ -407,3 +399,56 @@ def image_show(height=600):
     fig.update_xaxes(showticklabels=False)
     fig.update_yaxes(showticklabels=False)
     return fig
+
+def metrics_df_style():
+    metrics_dict = {
+        'ㅤ': ["Perlei", "Love", "Antonio"], 
+        'Max': [ph_max_words_per_day, love_max_words_per_day, at_max_words_per_day], 
+        'Max Date': [ph_date_max, love_date_max, at_date_max], 
+        'Min': [ph_min_words_per_day, love_min_words_per_day, at_min_words_per_day], 
+        'Min Date': [ph_date_min, love_date_min, at_date_min], 
+        'Mean': [int(ph_mean_words_per_day), int(love_mean_words_per_day), int(at_mean_words_per_day)]
+    }
+    metrics_df = pd.DataFrame(metrics_dict).set_index('ㅤ').T
+    header_styles = [
+        {'header': 'Perlei', 'props': [('font-size', '50px'), ('color', 'yellow')]},
+        {'header': 'Love', 'props': [('font-size', '50px'), ('color', 'red')]},
+        {'header': 'Antonio', 'props': [('font-size', '50px'), ('color', 'blue')]}
+    ]
+    # Apply styling to the metrics dataframe
+    df = metrics_df.style
+    
+    for style in header_styles:
+        header = style['header']
+        props = style['props']
+        df = df.set_properties(subset=[header], **dict(props))
+    condition = [False,True,False,True,False]
+    df = df.apply(lambda x: ['font-size: 50px' if c else 'font-size: 50px' for c in condition])
+    
+
+    # Intialize a list of tuples containing the CSS styles for table headers
+    th_props = [('font-size', '15px'), ('text-align', 'left'),
+                ('font-weight', 'bold'),('color', ''),
+                ('background-color', ''), ('border','0px #eeeeef'),
+        ]
+
+    # Intialize a list of tuples containing the CSS styles for table data
+    td_props = [('font-size', '25px'), ('text-align', 'center')]
+
+    # Define hover props for table data and headers
+    # cell_hover_props = [('background-color', '#eeeeef')]
+    headers_props = [('text-align','center'), ('font-size','40px')]
+
+    # Aggregate styles in a list
+    styles = [
+        dict(selector="th", props=th_props),
+        dict(selector="td", props=td_props),
+        # dict(selector="td:hover",props=cell_hover_props),
+        dict(selector='th.col_heading',props=headers_props),
+        dict(selector='th.col_heading.level0',props=headers_props),
+        dict(selector='th.col_heading.level1',props=td_props)
+    ]
+
+    df = df.set_table_styles(styles).to_html()
+
+    return df
