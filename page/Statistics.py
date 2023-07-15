@@ -20,15 +20,12 @@ def write():
             # When Love Hits Randomly
             ## It hits hard
             ### And basic logic becomes illogical 
-            .
             ## It breaks rules
             ### So an Ostriche can become a Flamingo 🦩
 
 
             """
         )
-        st.markdown("#")
-        st.markdown("#")
         st.markdown("#")
         st.button("Don't push!")
     with col2:
