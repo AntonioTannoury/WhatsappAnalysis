@@ -192,7 +192,7 @@ def text_format(color, name, header):
     title = f"<{header} style='text-align: center; color: {color};'>{name}</{header}>"
     return title
 
-
+@st.cache_data
 def filter_df(
     name=["Antonio", "Perlei"],
     date_min=df.timestamp.min().strftime("%Y/%m/%d"),
@@ -206,7 +206,7 @@ def filter_df(
     df_filtered = df_filtered.drop(columns=['Unnamed: 0','Count',"Hour"])
     return df_filtered
 
-
+@st.cache_data
 def ad_grid(data, height = 400):
     gb = GridOptionsBuilder.from_dataframe(data)
     gb.configure_pagination(paginationAutoPageSize=True, enabled=True)  # Add pagination
