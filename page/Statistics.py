@@ -34,9 +34,9 @@ def write():
         st.plotly_chart(image, theme="streamlit", use_container_width=True)
 
     st.sidebar.header("Select the Metrics you want to see")
-    historical_trend = st.sidebar.checkbox("Historical Trend", value=False)
-    date_category = st.sidebar.checkbox("By Time Category", value=False)
-    calendar = st.sidebar.checkbox("Calendar", value=False)
+    historical_trend = st.sidebar.checkbox("Historical Trend", value=True)
+    date_category = st.sidebar.checkbox("By Time Category", value=True)
+    calendar = st.sidebar.checkbox("Calendar", value=True)
 
     col11, col12 = st.columns(2)
 
