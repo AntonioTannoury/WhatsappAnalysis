@@ -206,7 +206,7 @@ def filter_df(
     df_filtered = df_filtered.drop(columns=['Unnamed: 0','Count',"Hour"])
     return df_filtered
 
-@st.cache_data
+@st.cache_data(experimental_allow_widgets=True)
 def ad_grid(data, height = 400):
     gb = GridOptionsBuilder.from_dataframe(data)
     gb.configure_pagination(paginationAutoPageSize=True, enabled=True)  # Add pagination
