@@ -5,3 +5,4 @@ awesome-streamlit
 opencv-python-headless==4.5.3.56
 calplot
 streamlit-aggrid==0.3.1
+wordcloud
