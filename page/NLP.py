@@ -68,15 +68,17 @@ def write():
     if (st.session_state['years_option'] == 2) or (submit_button) or (set(st.session_state['years_option']) != set(years_option)) or (set(st.session_state['names_option']) != set(names_option)):
     
         col41, col42 = st.columns([3,1])
-
-        with col41:
-            image = generate_word_cloud(df=df, author=names_option, year=years_option, words_to_remove=st.session_state['words'])
-            st.session_state['years_option'] = years_option
-            st.session_state['names_option'] = names_option
-            st.session_state['years_option'] = 3
-            st.image(image['image'], use_column_width=True)            
-        with col42:
-            data = image['counts']
-            ad_grid(data,height=555)
+        if len(years_option)==0 or len(names_option)==0:
+            st.write("To filter data, please choose at least one author and at least one year!")
+        else:
+            with col41:
+                image = generate_word_cloud(df=df, author=names_option, year=years_option, words_to_remove=st.session_state['words'])
+                st.session_state['years_option'] = years_option
+                st.session_state['names_option'] = names_option
+                st.session_state['years_option'] = 3
+                st.image(image['image'], use_column_width=True)            
+            with col42:
+                data = image['counts']
+                ad_grid(data,height=555)
 
 
