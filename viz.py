@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import calplot
-from cv2 import COLOR_BGR2RGB, cvtColor, imread
+# from cv2 import COLOR_BGR2RGB, cvtColor, imread
 import calendar
 from st_aggrid import GridOptionsBuilder, AgGrid
 import streamlit as st
@@ -414,16 +414,16 @@ def show_image(height=500):
     resized_img = img.resize((new_width, height))
     return resized_img
 
-def image_show(height=500):
-    mypath = "pics"
-    onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
-    random_path = random.choice(onlyfiles)
-    img = imread(random_path)
-    img = cvtColor(img, COLOR_BGR2RGB)
-    fig = px.imshow(img, height=height)
-    fig.update_xaxes(showticklabels=False)
-    fig.update_yaxes(showticklabels=False)
-    return fig
+# def image_show(height=500):
+#     mypath = "pics"
+#     onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
+#     random_path = random.choice(onlyfiles)
+#     # img = imread(random_path)
+#     img = cvtColor(img, COLOR_BGR2RGB)
+#     fig = px.imshow(img, height=height)
+#     fig.update_xaxes(showticklabels=False)
+#     fig.update_yaxes(showticklabels=False)
+#     return fig
 
 
 def metrics_df_style():
