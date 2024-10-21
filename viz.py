@@ -414,7 +414,8 @@ def show_image(height=500):
     resized_img = img.resize((new_width, height))
     return resized_img
 
-# def image_show(height=500):
+def image_show(height=500):
+    pass
 #     mypath = "pics"
 #     onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
 #     random_path = random.choice(onlyfiles)
