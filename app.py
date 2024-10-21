@@ -6,9 +6,30 @@ import page.home
 import page.Pics
 import page.NLP
 
+import streamlit_authenticator as st_auth
 
-def main():    
-    st.set_page_config(page_title="Random Love Demo", layout="wide")
+# create a session id for the user to keep track of the conversation
+# st.session_state.session_id = "streamlit_interface"
+def load_config(file_path):
+    """Load configuration from a YAML file."""
+    with open(file_path) as file:
+        return yaml.load(file, Loader=SafeLoader)
+    
+def authenticate_user(config):
+    """Authenticate the user."""
+    authenticator = st_auth.Authenticate(
+        config["credentials"],
+        config["cookie"]["name"],
+        config["cookie"]["key"],
+        config["cookie"]["expiry_days"],
+    )
+    return authenticator.login()
+
+def setup_page():
+    """Set up the Streamlit page configuration."""
+    st.set_page_config(page_title="Random Love Demo", layout="wide", page_icon="💎")
+
+def main_app():
     PAGES = {
         "Home Sweet Home": page.home,
         "Random Statistics": page.Statistics,
@@ -23,4 +44,17 @@ def main():
     st.spinner(f"Loading {selection} ...")
     ast.shared.components.write_page(_page)
 
-main()
+def main():        
+    config = load_config("users.yaml")
+    setup_page()
+
+    name, authentication_status, username = authenticate_user(config)
+    if authentication_status:    
+        main_app()
+    elif authentication_status is False:
+        st.error("Username/password is incorrect")
+    else:
+        st.warning("Please enter your username and password")
+
+if __name__ == "__main__":
+    main()

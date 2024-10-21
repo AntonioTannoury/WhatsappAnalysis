@@ -6,3 +6,4 @@ opencv-python==4.10.0.84
 calplot==0.1.7.5
 streamlit-aggrid==0.3.1
 wordcloud==1.9.3
+streamlit-authenticator==0.3.3

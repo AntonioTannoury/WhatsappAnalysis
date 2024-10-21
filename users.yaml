@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    antonio.tannoury:
+      user_id: 1
+      name: Antonio Tannoury
+      passname: password1
+      password: $2b$12$7J0taxrF73fyGXZr5MnIXeZF90Z8bLUQa2w93qL.fg2GrI4cu9Py.
+    perla.hayik:
+      name: Perla Hayik
+      user_id: 2
+      passname: password1
+      password: $2b$12$7J0taxrF73fyGXZr5MnIXeZF90Z8bLUQa2w93qL.fg2GrI4cu9Py.
+
+cookie:
+  name: random_cookie_name
+  key: some_random_key
+  expiry_days: 0.01
