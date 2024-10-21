@@ -6,11 +6,9 @@ import page.home
 import page.Pics
 import page.NLP
 
-st.set_page_config(page_title="Random Love Demo", layout="wide")
 
-
-def main():
-
+def main():    
+    st.set_page_config(page_title="Random Love Demo", layout="wide")
     PAGES = {
         "Home Sweet Home": page.home,
         "Random Statistics": page.Statistics,
@@ -25,7 +23,4 @@ def main():
     st.spinner(f"Loading {selection} ...")
     ast.shared.components.write_page(_page)
 
-
-if __name__ == "__main__":
-    main()
-#%%
+main()

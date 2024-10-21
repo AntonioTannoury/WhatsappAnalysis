@@ -1,8 +1,8 @@
-pandas==1.5.3
-plotly==5.13.0
-streamlit
-awesome-streamlit
-opencv-python-headless==4.5.3.56
-calplot
+pandas==2.2.2
+plotly==5.23.0
+streamlit==1.36.0
+awesome-streamlit==20200728.1
+opencv-python==4.10.0.84
+calplot==0.1.7.5
 streamlit-aggrid==0.3.1
-wordcloud
+wordcloud==1.9.3

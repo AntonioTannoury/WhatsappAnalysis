@@ -3,6 +3,7 @@ from viz import (
     metrics_df_style,
     metrics, 
     image_show, 
+    show_image,
     filter_df, 
     ad_grid)
 
@@ -31,8 +32,8 @@ def write():
         st.markdown("#")
         st.button("Don't push!")
     with col2:
-        image = image_show()
-        st.plotly_chart(image, theme="streamlit", use_container_width=True)
+        img = show_image()
+        st.image(img,use_column_width=False)
 
     col21, col22 = st.columns([1,2])
     with col21:
@@ -49,7 +50,8 @@ def write():
             """
         )
         filter_data = filter_df()
-        ad_grid(filter_data)
+        st.dataframe(filter_data, hide_index=True,use_container_width=True)
+
 
 
 

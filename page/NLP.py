@@ -36,21 +36,22 @@ def write():
         words_to_remove = st.multiselect("Select words to remove:", uniques, key=0)
         submit_button = st.button("Submit Words")
         st.session_state['words'] = st.session_state['words'].union(set(words_to_remove))
-
+    with col12:
+        number_of_characters = int(st.number_input("Minimum Number of Character per word", value=1))
     col21, col22, col23, col24 = st.columns(4)
     if submit_button or st.session_state['years_option']==1:
         st.session_state['years_option'] = 2
         with col21:
-            image21 = generate_word_cloud_2020(df=df, words_to_remove=st.session_state['words'])['image']
+            image21 = generate_word_cloud_2020(df=df,number_of_characters=number_of_characters, words_to_remove=st.session_state['words'])['image']
             st.image(image21, use_column_width=True)
         with col22:
-            image22 = generate_word_cloud_2021(df=df, words_to_remove=st.session_state['words'])['image']
+            image22 = generate_word_cloud_2021(df=df,number_of_characters=number_of_characters, words_to_remove=st.session_state['words'])['image']
             st.image(image22, use_column_width=True)
         with col23:
-            image23 = generate_word_cloud_2022(df=df, words_to_remove=st.session_state['words'])['image']
+            image23 = generate_word_cloud_2022(df=df,number_of_characters=number_of_characters, words_to_remove=st.session_state['words'])['image']
             st.image(image23, use_column_width=True)
         with col24:
-            image24 = generate_word_cloud_2023(df=df, words_to_remove=st.session_state['words'])['image']
+            image24 = generate_word_cloud_2023(df=df,number_of_characters=number_of_characters, words_to_remove=st.session_state['words'])['image']
             st.image(image24, use_column_width=True)
 
 
@@ -72,13 +73,14 @@ def write():
             st.write("To filter data, please choose at least one author and at least one year!")
         else:
             with col41:
-                image = generate_word_cloud(df=df, author=names_option, year=years_option, words_to_remove=st.session_state['words'])
+                image = generate_word_cloud(df=df,number_of_characters=number_of_characters, author=names_option, year=years_option, words_to_remove=st.session_state['words'])
                 st.session_state['years_option'] = years_option
                 st.session_state['names_option'] = names_option
                 st.session_state['years_option'] = 3
                 st.image(image['image'], use_column_width=True)            
             with col42:
                 data = image['counts']
-                ad_grid(data,height=555)
+                print(data.head())
+                st.dataframe(data, hide_index=True,use_container_width=True)
 
 

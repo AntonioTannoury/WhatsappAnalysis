@@ -2,6 +2,7 @@ import streamlit as st
 
 from viz import (
     image_show,
+    show_image,
     daily_scatter,
     monthly_bar,
     weekday_bar,
@@ -30,8 +31,8 @@ def write():
         st.button("Don't push!")
     with col2:
 
-        image = image_show()
-        st.plotly_chart(image, theme="streamlit", use_container_width=True)
+        img = show_image()
+        st.image(img,use_column_width=False)
 
     st.sidebar.header("Select the Metrics you want to see")
     historical_trend = st.sidebar.checkbox("Historical Trend", value=True)

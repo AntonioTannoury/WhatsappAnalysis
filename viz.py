@@ -16,12 +16,17 @@ import re
 from PIL import Image
 import numpy as np
 
+
 def load_data():
-    df = pd.read_csv("data.csv")
+    df = pd.read_parquet("data.parquet")
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df.set_index("timestamp", inplace=True)
     df.insert(0, "timestamp", df.index)
     df["count"] = 1
+
+    df['words'] = df['message'].apply(lambda x:len(x.split(" ")))
+    df['weekday'] = df['timestamp'].dt.day_name()
+
     df_weekdays = df.groupby(["author", "weekday"]).sum(numeric_only=True).reset_index()
     cats = [
         "Sunday",
@@ -203,10 +208,10 @@ def filter_df(
     ].sort_index()
 
     df_filtered.columns = [i.title() for i in df_filtered.columns]
-    df_filtered = df_filtered.drop(columns=['Unnamed: 0','Count',"Hour"])
+    df_filtered = df_filtered.drop(columns=['Count'])
     return df_filtered
 
-@st.cache_data(experimental_allow_widgets=True)
+@st.cache_data
 def ad_grid(data, height = 400):
     gb = GridOptionsBuilder.from_dataframe(data)
     gb.configure_pagination(paginationAutoPageSize=True, enabled=True)  # Add pagination
@@ -395,6 +400,20 @@ def daily_calender(name):
     return cal[0]
 
 
+def show_image(height=500):
+    mypath = "pics"
+    onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
+    random_path = random.choice(onlyfiles)
+    # Load the image from the specified path
+    img = Image.open(random_path)
+    # Calculate the new width while maintaining the aspect ratio
+    aspect_ratio = img.width / img.height
+    new_width = int(height * aspect_ratio)
+    
+    # Resize the image
+    resized_img = img.resize((new_width, height))
+    return resized_img
+
 def image_show(height=500):
     mypath = "pics"
     onlyfiles = [mypath + "/" + f for f in listdir(mypath) if isfile(join(mypath, f))]
@@ -507,14 +526,14 @@ def remove_emoji(text):
                             "]+", flags=re.UNICODE)
     return reduce_consecutive_letters(emoji_pattern.sub(r'', re.sub(r'[^\w]', ' ', text)))
 
-def remove_single_character_words(text):
-    # Define the pattern to match single character words
-    pattern = r'\b\w{1}\b'
+def remove_n_character_words(text,n):
+    # Construct the regex pattern
+    pattern = r'\b\w{1,' + str(n) + r'}\b'
 
-    # Remove single character words from the text
-    text_without_single_char_words = re.sub(pattern, ' ', text)
+    # Remove the words from the string
+    modified_text = re.sub(pattern, ' ', text)
 
-    return text_without_single_char_words
+    return modified_text 
 
 
 def remove_words_from_string(text, words_to_remove):
@@ -526,12 +545,12 @@ def remove_words_from_string(text, words_to_remove):
 
     return modified_text
 
-@st.cache_data
-def generate_word_cloud_2020( df, words_to_remove = {""}, author=['Antonio','Perlei']):
+@st.cache_data 
+def generate_word_cloud_2020( df, number_of_characters = 3, words_to_remove = {""}, author=['Antonio','Perlei']):
     words_to_remove = words_to_remove.union(stop_words)
     df_filter = df.loc[(df.timestamp.dt.year.isin([2020])) & (df.author.isin(author))]
     text = " ".join(df_filter.message.dropna().to_list()).lower()
-    text = remove_single_character_words(text)
+    text = remove_n_character_words(text,n=number_of_characters)
     text = remove_emoji(text)
     text = remove_words_from_string(text, words_to_remove)
     counts = pd.Series(text.split()).value_counts()
@@ -551,11 +570,11 @@ def generate_word_cloud_2020( df, words_to_remove = {""}, author=['Antonio','Per
     return {"image":image, "counts":counts}
 
 @st.cache_data
-def generate_word_cloud_2021( df, words_to_remove = [""], author=['Antonio','Perlei']):
+def generate_word_cloud_2021( df, number_of_characters = 3, words_to_remove = [""], author=['Antonio','Perlei']):
     words_to_remove = words_to_remove.union(stop_words)
     df_filter = df.loc[(df.timestamp.dt.year.isin([2021])) & (df.author.isin(author))]
     text = " ".join(df_filter.message.dropna().to_list()).lower()
-    text = remove_single_character_words(text)
+    text = remove_n_character_words(text,n=number_of_characters)
     text = remove_emoji(text)
     text = remove_words_from_string(text, words_to_remove)
     counts = pd.Series(text.split()).value_counts()
@@ -575,11 +594,11 @@ def generate_word_cloud_2021( df, words_to_remove = [""], author=['Antonio','Per
     return {"image":image, "counts":counts}
 
 @st.cache_data
-def generate_word_cloud_2022( df, words_to_remove = [""], author=['Antonio','Perlei']):
+def generate_word_cloud_2022( df, number_of_characters = 3, words_to_remove = [""], author=['Antonio','Perlei']):
     words_to_remove = words_to_remove.union(stop_words)
     df_filter = df.loc[(df.timestamp.dt.year.isin([2022])) & (df.author.isin(author))]
     text = " ".join(df_filter.message.dropna().to_list()).lower()
-    text = remove_single_character_words(text)
+    text = remove_n_character_words(text,n=number_of_characters)
     text = remove_emoji(text)
     text = remove_words_from_string(text, words_to_remove)
     counts = pd.Series(text.split()).value_counts()
@@ -599,11 +618,11 @@ def generate_word_cloud_2022( df, words_to_remove = [""], author=['Antonio','Per
     return {"image":image, "counts":counts}
 
 @st.cache_data
-def generate_word_cloud_2023( df, words_to_remove = [""], author=['Antonio','Perlei']):
+def generate_word_cloud_2023( df, number_of_characters = 3, words_to_remove = [""], author=['Antonio','Perlei']):
     words_to_remove = words_to_remove.union(stop_words)
     df_filter = df.loc[(df.timestamp.dt.year.isin([2023])) & (df.author.isin(author))]
     text = " ".join(df_filter.message.dropna().to_list()).lower()
-    text = remove_single_character_words(text)
+    text = remove_n_character_words(text,n=number_of_characters)
     text = remove_emoji(text)
     text = remove_words_from_string(text, words_to_remove)
     counts = pd.Series(text.split()).value_counts()
@@ -623,15 +642,15 @@ def generate_word_cloud_2023( df, words_to_remove = [""], author=['Antonio','Per
     return {"image":image, "counts":counts}
 
 @st.cache_data
-def generate_word_cloud( df, words_to_remove = [""], author=['Antonio','Perlei'], year=[2020,2021,2022,2023,2024]):
+def generate_word_cloud( df, number_of_characters = 3, words_to_remove = [""], author=['Antonio','Perlei'], year=[2020,2021,2022,2023,2024]):
     words_to_remove = words_to_remove.union(stop_words)
     df_filter = df.loc[(df.timestamp.dt.year.isin(year)) & (df.author.isin(author))]
     text = " ".join(df_filter.message.dropna().to_list()).lower()
-    text = remove_single_character_words(text)
+    text = remove_n_character_words(text,n=number_of_characters)
     text = remove_emoji(text)
     text = remove_words_from_string(text, words_to_remove)
     counts = pd.Series(text.split()).value_counts()
-    counts = pd.DataFrame(counts, columns=['Count']).reset_index()
+    counts = pd.DataFrame(counts).reset_index()
     counts.columns = ['Word','Count']
 
     onlyfiles = ["masks/chaos.jpg","masks/love.jpg","masks/cloud9.jpg","masks/heart.jpg"]
