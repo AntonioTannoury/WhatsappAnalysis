@@ -6,6 +6,7 @@ import page.home
 import page.Pics
 import page.NLP
 import yaml
+from yaml.loader import SafeLoader
 import streamlit_authenticator as st_auth
 
 # create a session id for the user to keep track of the conversation
